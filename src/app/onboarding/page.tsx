@@ -165,8 +165,8 @@ function OnboardingContent() {
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field label="Your name" value={profile.name} onChange={(v) => set("name", v)} placeholder="Amina Musa" />
                   <Field label="Farm name" value={profile.farm} onChange={(v) => set("farm", v)} placeholder="Kwakwaba Farm" />
-                  <Field label="Country" value={profile.country} onChange={(v) => set("country", v)} placeholder="Nigeria" />
-                  <Field label="State" value={profile.state} onChange={(v) => set("state", v)} placeholder="Niger" />
+                  <Field label="Country" value={profile.country} onChange={(v) => set("country", v)} placeholder="Cameroon" />
+                  <Field label="Region" value={profile.state} onChange={(v) => set("state", v)} placeholder="Centre" />
                   <Field
                     label="Local government area"
                     value={profile.lga}

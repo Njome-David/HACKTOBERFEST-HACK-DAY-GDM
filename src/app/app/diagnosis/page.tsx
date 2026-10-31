@@ -237,6 +237,11 @@ export default function DiagnosisPage() {
   return (
     <>
     <div className="animate-agv-rise print:hidden max-w-[1100px]">
+      {result.demoMode && (
+        <div className="mb-4 rounded-lg border border-warn/30 bg-warn/10 px-4 py-3 text-[13px] leading-[1.5] text-fg-muted">
+          Hackathon demo: fixed tomato blossom-end rot result. The photo and clarification answers were not analyzed.
+        </div>
+      )}
       {/* 1. Verdict header */}
       <div className="flex items-center gap-2.5 font-mono text-[10.5px] tracking-[0.12em] text-leaf uppercase">
         <span className="h-[7px] w-[7px] rounded-full bg-leaf" />
@@ -265,7 +270,7 @@ export default function DiagnosisPage() {
         {[
           { label: t.factCrop, value: result.crop, tone: undefined },
           { label: t.factType, value: capitalize(result.type), tone: undefined },
-          { label: t.factConfidence, value: `${Math.round(result.confidence * 100)}%`, tone: "accent" as Tone },
+          { label: t.factConfidence, value: result.demoMode ? "Demo" : `${Math.round(result.confidence * 100)}%`, tone: "accent" as Tone },
           {
             label: t.factSeverity,
             value: capitalize(result.severity),
@@ -377,20 +382,24 @@ export default function DiagnosisPage() {
               <Card>
                 <CardEyebrow>{t.confidenceBreakdown}</CardEyebrow>
                 <div className="mt-3.5 flex flex-col gap-2.5">
-                  {(result.confidenceBreakdown.length > 0
-                    ? result.confidenceBreakdown
-                    : [{ label: t.overallConfidence, score: result.confidence }]
-                  ).map((signal) => (
-                    <div key={signal.label}>
-                      <div className="flex items-center justify-between text-[12.5px] text-fg-muted">
-                        <span>{signal.label}</span>
-                        <span className="font-mono">{Math.round(signal.score * 100)}%</span>
+                  {result.demoMode ? (
+                    <p className="text-[12.5px] leading-[1.5] text-fg-dim">Not assessed in demo mode.</p>
+                  ) : (
+                    (result.confidenceBreakdown.length > 0
+                      ? result.confidenceBreakdown
+                      : [{ label: t.overallConfidence, score: result.confidence }]
+                    ).map((signal) => (
+                      <div key={signal.label}>
+                        <div className="flex items-center justify-between text-[12.5px] text-fg-muted">
+                          <span>{signal.label}</span>
+                          <span className="font-mono">{Math.round(signal.score * 100)}%</span>
+                        </div>
+                        <div className="mt-1 h-1 overflow-hidden rounded-full" style={{ background: "rgba(242,240,230,0.1)" }}>
+                          <div className="h-full rounded-full bg-leaf" style={{ width: `${Math.round(signal.score * 100)}%` }} />
+                        </div>
                       </div>
-                      <div className="mt-1 h-1 overflow-hidden rounded-full" style={{ background: "rgba(242,240,230,0.1)" }}>
-                        <div className="h-full rounded-full bg-leaf" style={{ width: `${Math.round(signal.score * 100)}%` }} />
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
                 <div className="mt-4 border-t border-[var(--color-border)] pt-3.5">
                   <div className="font-mono text-[9.5px] tracking-[0.1em] text-fg-faint uppercase">{t.safety}</div>

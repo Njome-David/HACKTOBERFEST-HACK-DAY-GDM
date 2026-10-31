@@ -19,7 +19,7 @@ const ROWS = [
   },
   {
     title: "Local language",
-    body: "Responses are generated directly in Hausa, Yoruba or Igbo and read aloud with the Web Speech API.",
+    body: "Responses can be requested in Hausa, Ewondo (pilot) or Cameroon Pidgin (experimental). Ewondo and Pidgin quality needs validation with local speakers.",
   },
   {
     title: "Efficient inference",

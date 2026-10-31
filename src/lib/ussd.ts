@@ -12,9 +12,9 @@ import { LANGUAGE_NAMES } from "./languages";
 // has entered this session on every request (see handleUssdSession), so
 // there's nothing to persist server-side and no session-state table.
 
-type UssdLang = "en" | "ha" | "yo" | "ig";
+type UssdLang = "en" | "ha" | "ewo" | "cameroon-pidgin";
 
-const LANG_ORDER: UssdLang[] = ["en", "ha", "yo", "ig"];
+const LANG_ORDER: UssdLang[] = ["en", "ha", "ewo", "cameroon-pidgin"];
 
 interface UssdStrings {
   mainMenu: string;
@@ -28,10 +28,10 @@ interface UssdStrings {
 }
 
 // Short, plain-register menu copy — same tone as the rest of this app's
-// Hausa/Yorùbá/Igbo strings in src/lib/i18n.ts. Worth a native-speaker
+// Hausa strings in src/lib/i18n.ts. Worth a native-speaker
 // proofread pass before a live demo if anyone's available; same
 // transparency caveat as the rest of this project's translations.
-const STRINGS: Record<UssdLang, UssdStrings> = {
+const BASE_STRINGS: Record<"en" | "ha", UssdStrings> = {
   en: {
     mainMenu: "1. Ask a farming question\n2. Outbreaks near me",
     questionPrompt: "Type your farming question:",
@@ -52,26 +52,13 @@ const STRINGS: Record<UssdLang, UssdStrings> = {
     error: "Wani kuskure ya faru. Sake gwadawa.",
     noOutbreakData: (state) => `Babu bayanan barkewa don ${state} tukuna.`,
   },
-  yo: {
-    mainMenu: "1. Béèrè ìbéèrè oko\n2. Àrùn nítòsí mi",
-    questionPrompt: "Kọ ìbéèrè rẹ:",
-    stateMenuHeader: "Yan ìpínlẹ̀ rẹ:",
-    invalid: "Àṣìṣe. Gbìyànjú lẹ́ẹ̀kansí.",
-    blankQuestion: "Jọ̀wọ́ kọ ìbéèrè kan.",
-    noAi: "Demo: A ò tí so AI pọ̀ mọ́ ìsinsìnyí.",
-    error: "Àṣìṣe kan ṣẹlẹ̀. Gbìyànjú lẹ́ẹ̀kansí.",
-    noOutbreakData: (state) => `Kò sí data àrùn fún ${state} bẹ́ẹ̀ni.`,
-  },
-  ig: {
-    mainMenu: "1. Jụọ ajụjụ ugbo\n2. Ọrịa nso m",
-    questionPrompt: "Dee ajụjụ gị:",
-    stateMenuHeader: "Họrọ steeti gị:",
-    invalid: "Njehie. Nwaa ọzọ.",
-    blankQuestion: "Biko dee ajụjụ.",
-    noAi: "Demo: Ejikọtabeghị AI.",
-    error: "Ihe adịghị mma mere. Nwaa ọzọ.",
-    noOutbreakData: (state) => `Enweghị data ọrịa maka ${state} ugbu a.`,
-  },
+};
+
+const STRINGS: Record<UssdLang, UssdStrings> = {
+  en: BASE_STRINGS.en,
+  ha: BASE_STRINGS.ha,
+  ewo: BASE_STRINGS.en,
+  "cameroon-pidgin": BASE_STRINGS.en,
 };
 
 // Approximate state centroids, same "close enough for a demo, clearly a
@@ -153,7 +140,7 @@ export async function handleUssdSession(text: string): Promise<string> {
   const parts = text.trim() === "" ? [] : text.trim().split("*");
 
   if (parts.length === 0) {
-    return "CON Welcome to AgroVision\n1. English\n2. Hausa\n3. Yoruba\n4. Igbo";
+    return "CON Welcome to AgroVision\n1. English\n2. Hausa\n3. Ewondo (pilot)\n4. Cameroon Pidgin (experimental)";
   }
 
   const langIndex = Number(parts[0]);

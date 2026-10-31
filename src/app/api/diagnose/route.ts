@@ -102,6 +102,40 @@ const DEMO_DIAGNOSIS: DiagnosisResult = {
   retakeInstruction: "",
 };
 
+const TOMATO_DEMO_DIAGNOSIS: DiagnosisResult = {
+  demoMode: true,
+  label: "Blossom-end rot",
+  crop: "Tomato",
+  type: "disease",
+  confidence: 0.72,
+  severity: "moderate",
+  description: "Hackathon demo result for tomato blossom-end rot; the photo was not analyzed.",
+  explanation:
+    "This is a fixed hackathon demo result, not a diagnosis from your photo. Blossom-end rot is a tomato fruit disorder often associated with uneven water supply. Keep soil moisture steady and check new fruit as it develops. Use this result for demonstration only.",
+  visualEvidence: "Demo placeholder: the uploaded image was not checked for symptoms.",
+  confidenceBreakdown: [],
+  treatment: [
+    "Keep soil moisture steady during fruit growth.",
+    "Water near the soil when it begins to dry.",
+    "Remove affected fruit and check new growth.",
+  ],
+  products: [],
+  prevention: [
+    "Water consistently while fruits are developing.",
+    "Mulch around plants to reduce moisture swings.",
+    "Avoid applying excess nitrogen fertilizer.",
+  ],
+  safety: {
+    protectiveEquipment: [],
+    applicationTiming: "Not applicable",
+    reEntryInterval: "Not applicable",
+    harvestWaitingPeriod: "Not applicable",
+  },
+  photoQuality: { ok: false, cautions: ["The photo was not analyzed in this demo."] },
+  needsRetake: false,
+  retakeInstruction: "",
+};
+
 interface Clarifications {
   where: string;
   when: string;
@@ -131,6 +165,7 @@ const WHEN_GUIDANCE: Record<string, string> = {
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const imageBase64: string | undefined = body?.imageBase64;
+  const crop: string | undefined = body?.crop;
   const notes: string | undefined = body?.notes;
   const weatherContext: string | undefined = body?.weatherContext;
   const language: string | undefined = body?.language;
@@ -139,6 +174,10 @@ export async function POST(req: NextRequest) {
 
   if (!imageBase64) {
     return NextResponse.json({ error: "imageBase64 is required" }, { status: 400 });
+  }
+
+  if (crop?.trim().toLowerCase() === "tomato") {
+    return NextResponse.json({ demoMode: true, diagnosis: TOMATO_DEMO_DIAGNOSIS });
   }
 
   if (!isGemmaConfigured()) {
