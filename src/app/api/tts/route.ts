@@ -9,8 +9,6 @@ const DEFAULT_VOICE = "Idera";
 const VOICES: Record<string, string | undefined> = {
   en: process.env.YARNGPT_VOICE_EN || "Emma",
   ha: process.env.YARNGPT_VOICE_HA || "Zainab",
-  yo: process.env.YARNGPT_VOICE_YO || "Wura",
-  ig: process.env.YARNGPT_VOICE_IG || "Chinenye",
 };
 
 // YarnGPT accepts up to 2000 chars per request, but generation time scales
@@ -70,7 +68,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "TTS is not configured" }, { status: 501 });
   }
 
-  const voice = VOICES[language ?? "en"] || VOICES.en || DEFAULT_VOICE;
+  const voice = VOICES[language ?? "en"];
+  if (!voice) {
+    return NextResponse.json({ error: "Speech is not configured for this language" }, { status: 501 });
+  }
 
   try {
     const chunks = splitIntoChunks(text);

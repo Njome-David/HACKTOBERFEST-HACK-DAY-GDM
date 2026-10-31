@@ -15,7 +15,7 @@ const PAIN_POINTS = [
   },
   {
     title: "Knowledge in the wrong language",
-    body: "Agronomic guidance is written in English text for readers. Many farmers need spoken Hausa, Yoruba or Igbo.",
+    body: "Agronomic guidance is often written in English. Many farmers need spoken support in local languages such as Ewondo and Cameroon Pidgin.",
   },
 ];
 

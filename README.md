@@ -1,9 +1,10 @@
 # AgroVision AI
 
 A farm expert in every pocket — even offline. AgroVision AI diagnoses crop disease and pests
-from a photo, answers farming questions by voice in Hausa, Yorùbá, Igbo or English, tracks a
-farm's history, and crowdsources a real early-warning outbreak map ("Village Watch") between
-nearby farms — all powered by **Gemma 4**.
+from a photo, answers farming questions in English and Hausa, and offers Ewondo (pilot) and
+Cameroon Pidgin (experimental) for validation with local speakers. It tracks a farm's history
+and crowdsources a real early-warning outbreak map ("Village Watch") between nearby farms —
+all powered by **Gemma 4**.
 
 Built for **Build with Gemma: AI for Africa** (Minna 2026) — Social Impact / Multimodal /
 Edge AI / Local Language tracks.
@@ -26,8 +27,9 @@ If you only have a few minutes, this is the path that shows the most:
    "Send live alert" button broadcasts to every open tab of the app in real time.
 5. **Assistant** (`/app/assistant`) — free-form chat, with voice input/output (see the browser
    note below — voice input needs `https://` or `localhost`, not a bare IP address).
-6. Switch the language dropdown (top of the sidebar) to Hausa/Yorùbá/Igbo — the whole UI and
-   Gemma's own responses re-render in that language.
+6. Switch the language dropdown (top of the sidebar) to English, Hausa, Ewondo (pilot) or
+  Cameroon Pidgin (experimental). The static interface falls back to English for the two
+  experimental languages until native-speaker-reviewed translations are available.
 7. **USSD** (`/api/ussd`) — the same app, reachable from a basic feature phone with zero data
    plan, over a telecom gateway. See [USSD access](#ussd-access-feature-phone-demo) below.
 
@@ -79,8 +81,9 @@ curl -s -X POST http://localhost:3000/api/ussd --data "sessionId=t1&text=1*1*How
 - **Gemma 4** — swappable inference backend: Google (Gemini API) or fully local via **Ollama**
   (same code path, one env var switches between them)
 - **Neon (Postgres)** — the one piece of real shared/cross-device state (Village Watch)
-- **YarnGPT** — text-to-speech in Nigerian languages, with the browser's Web Speech API as a
-  built-in fallback
+- **YarnGPT** — text-to-speech voices configured for English and Hausa, with browser speech
+  fallback where a matching voice is installed. Ewondo and Cameroon Pidgin speech support is
+  not yet validated.
 - **MediaRecorder / Web Speech API** — camera capture and voice input
 
 ---

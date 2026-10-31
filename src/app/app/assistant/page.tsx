@@ -147,7 +147,12 @@ export default function AssistantPage() {
       recognitionRef.current?.stop();
       return;
     }
-    const speechLang = LANGUAGES.find((l) => l.code === language)?.speechLang ?? "en-US";
+    const languageOption = LANGUAGES.find((option) => option.code === language);
+    if (!languageOption?.speechLang) {
+      alert(`${languageOption?.label ?? "This language"} voice input is not available through browser speech recognition yet. You can type your question instead.`);
+      return;
+    }
+    const speechLang = languageOption.speechLang;
     const recognition = new SpeechRecognitionCtor();
     recognition.lang = speechLang;
     recognition.interimResults = true;

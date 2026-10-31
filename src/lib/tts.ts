@@ -65,7 +65,7 @@ export function speakText(
 ): SpeakController {
   const token = { cancelled: false, audio: null as HTMLAudioElement | null };
   const langMeta = LANGUAGES.find((l) => l.code === language);
-  const speechLang = langMeta?.speechLang ?? "en-US";
+  const speechLang = langMeta?.speechLang;
 
   const stopProgress = handlers.onProgress ? startProgressRamp(handlers.onProgress) : null;
   const finishProgress = () => {
@@ -74,6 +74,13 @@ export function speakText(
   };
 
   (async () => {
+    if (!speechLang) {
+      finishProgress();
+      handlers.onVoiceFallbackNotice?.(`Voice output is not available for ${langMeta?.label ?? "this language"} yet.`);
+      handlers.onEnd?.();
+      return;
+    }
+
     try {
       const blob = await (prefetched ?? prefetchSpeech(text, language));
       if (token.cancelled) return;

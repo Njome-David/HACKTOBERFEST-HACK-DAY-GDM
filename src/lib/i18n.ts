@@ -4,7 +4,7 @@
 // (diagnoses, chat replies) is translated live by the model via the
 // `language` field sent to /api/diagnose and /api/chat, not from this table.
 
-export type AppLanguage = "en" | "ha" | "yo" | "ig";
+export type AppLanguage = "en" | "ha" | "ewo" | "cameroon-pidgin";
 
 export interface AppStrings {
   // Sidebar / nav
@@ -334,8 +334,8 @@ export interface AppStrings {
 export const APP_LANGUAGES: { code: AppLanguage; label: string }[] = [
   { code: "en", label: "English" },
   { code: "ha", label: "Hausa" },
-  { code: "yo", label: "Yorùbá" },
-  { code: "ig", label: "Igbo" },
+  { code: "ewo", label: "Ewondo (pilot)" },
+  { code: "cameroon-pidgin", label: "Cameroon Pidgin (experimental)" },
 ];
 
 /** Replaces `{{token}}` placeholders in a translated template string. */
@@ -343,7 +343,7 @@ export function tpl(template: string, vars: Record<string, string | number>): st
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => String(vars[key] ?? ""));
 }
 
-export const APP_STRINGS: Record<AppLanguage, AppStrings> = {
+const ALL_STRINGS: Record<string, AppStrings> = {
   en: {
     navDash: "Dashboard",
     navScan: "Scan",
@@ -1600,6 +1600,13 @@ export const APP_STRINGS: Record<AppLanguage, AppStrings> = {
     watchOffline: "Enweghị data ihu igwe na ọrịa n'ịntanetị — na-egosi nsonaazụ echekwara ikpeazụ.",
     watchCachedAsOfTpl: "Dịka nke {{time}} (echekwara)",
   },
+};
+
+export const APP_STRINGS: Record<AppLanguage, AppStrings> = {
+  en: ALL_STRINGS.en,
+  ha: ALL_STRINGS.ha,
+  ewo: ALL_STRINGS.en,
+  "cameroon-pidgin": ALL_STRINGS.en,
 };
 
 export function timeOfDayGreeting(strings: AppStrings, date = new Date()): string {
