@@ -12,9 +12,9 @@ const SLIDES = [
 ];
 
 const STATS = [
-  { value: "33M", label: "smallholder farms in Nigeria" },
-  { value: "1:2,500", label: "extension officer to farmer ratio" },
-  { value: "0 MB", label: "data needed in Phase 2 edge mode" },
+  { value: "4", label: "language options, including two Cameroon pilots" },
+  { value: "Gemma 4", label: "multimodal crop diagnosis" },
+  { value: "USSD", label: "basic-phone access" },
 ];
 
 export default function Hero() {
@@ -68,7 +68,7 @@ export default function Hero() {
           style={{ borderColor: "rgba(163,230,53,0.25)", background: "rgba(163,230,53,0.06)" }}
         >
           <span className="animate-agv-pulse h-1.5 w-1.5 rounded-full bg-leaf" />
-          Build with Gemma · Minna 2026
+          Hacktoberfest Hack Day · Yaoundé 2026
         </div>
 
         <h1
@@ -79,9 +79,8 @@ export default function Hero() {
         </h1>
 
         <p className="mt-6 max-w-[52ch] text-[16px] leading-[1.55] text-fg-muted sm:text-[19px]" style={{ textWrap: "pretty" }}>
-          AgroVision AI diagnoses crop disease from a photo and supports Hausa, Ewondo (pilot) and Cameroon Pidgin (experimental),
-          and tracks a farm&apos;s history — powered by Gemma 4 running in the cloud today and fully on-device
-          tomorrow.
+          AgroVision AI uses Gemma 4 to assess crop photos and provide practical farming guidance in English, Hausa,
+          Ewondo (pilot) and Cameroon Pidgin (experimental). Voice input is available in English and Hausa.
         </p>
 
         <div className="mt-[34px] flex flex-wrap gap-3.5">
