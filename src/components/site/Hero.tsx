@@ -79,7 +79,7 @@ export default function Hero() {
         </h1>
 
         <p className="mt-6 max-w-[52ch] text-[16px] leading-[1.55] text-fg-muted sm:text-[19px]" style={{ textWrap: "pretty" }}>
-          AgroVision AI diagnoses crop disease from a photo, answers questions by voice in Hausa, Yoruba and Igbo,
+          AgroVision AI diagnoses crop disease from a photo and supports Hausa, Ewondo (pilot) and Cameroon Pidgin (experimental),
           and tracks a farm&apos;s history — powered by Gemma 4 running in the cloud today and fully on-device
           tomorrow.
         </p>

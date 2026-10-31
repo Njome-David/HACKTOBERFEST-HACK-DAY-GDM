@@ -27,7 +27,7 @@ const CARDS = [
     alt: "Women planting together on a smallholding",
     position: "45% 40%",
     title: "Voice, any language",
-    body: "Ask out loud in Hausa, Yoruba, Igbo or English and hear the answer spoken back.",
+    body: "Ask by voice in English or Hausa. Ewondo (pilot) and Cameroon Pidgin (experimental) still need voice validation; use text for now.",
   },
 ];
 
