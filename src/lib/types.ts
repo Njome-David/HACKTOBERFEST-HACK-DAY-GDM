@@ -29,6 +29,7 @@ export interface TreatmentProduct {
 }
 
 export interface DiagnosisResult {
+  demoMode?: boolean;
   label: string;
   crop: string; // common name of the crop shown in the photo, or "Unknown"
   type: "disease" | "pest" | "healthy" | "unknown";

@@ -31,11 +31,18 @@ If you would name a pest or disease, use the same everyday name a farmer would (
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const imageBase64: string | undefined = body?.imageBase64;
+  const crop: string | undefined = body?.crop;
   const profileContext: string | undefined = body?.profileContext;
   const language: string | undefined = body?.language;
 
   if (!imageBase64) {
     return NextResponse.json({ error: "imageBase64 is required" }, { status: 400 });
+  }
+
+  if (crop?.trim().toLowerCase() === "tomato") {
+    return NextResponse.json({
+      photoQuality: { ok: false, cautions: ["The photo will not be analyzed in this demo flow."] },
+    });
   }
 
   if (!isGemmaConfigured()) {

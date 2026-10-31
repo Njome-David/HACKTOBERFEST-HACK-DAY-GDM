@@ -67,6 +67,7 @@ export default function ClarifyPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             imageBase64: resized.split(",")[1],
+            crop: pending.crop,
             profileContext: profile ? buildProfileContext(profile) : undefined,
             language,
           }),
@@ -120,6 +121,7 @@ export default function ClarifyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           imageBase64,
+          crop: pending.crop,
           notes: `Crop: ${pending.crop}`,
           weatherContext,
           language,
