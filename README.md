@@ -1,201 +1,69 @@
 # AgroVision AI
 
-A farm expert in every pocket — even offline. AgroVision AI diagnoses crop disease and pests
-from a photo, answers farming questions in English and Hausa, and offers Ewondo (pilot) and
-Cameroon Pidgin (experimental) for validation with local speakers. It tracks a farm's history
-and crowdsources a real early-warning outbreak map ("Village Watch") between nearby farms —
-all powered by **Gemma 4**.
+AgroVision AI is a multilingual farming assistant built for **Hacktoberfest Hack Day Yaoundé x Modulis 2026**. It uses Gemma 4 to help farmers identify crop problems from photos, get practical farming guidance, and share privacy-conscious outbreak alerts.
 
-Built for **Build with Gemma: AI for Africa** (Minna 2026) — Social Impact / Multimodal /
-Edge AI / Local Language tracks.
+The Yaoundé Hack Day focused on open-source and open-weight AI. Its relevant tracks were **Best Use of Gemma 4** and **Best Open-Source AI Project**. The event took place on October 31, 2026. [Event details](https://events.mlh.io/events/14863-hacktoberfest-hack-day-yaounde-x-modulis).
 
----
+## What it does
 
-## What to actually test
+- **Photo diagnosis:** Analyze a crop photo, ask clarifying questions, and return a structured diagnosis with confidence, severity, and suggested next steps.
+- **Farm assistant:** Ask farming questions by text or voice. English and Hausa voice input are supported; use text for Ewondo (pilot) and Cameroon Pidgin (experimental).
+- **Cameroon language options:** English, Hausa, Ewondo (pilot), and Cameroon Pidgin (experimental). Ewondo and Pidgin output still need validation with local speakers.
+- **Village Watch:** Share outbreak reports with nearby farms. Real reports are aggregated and small groups are suppressed; demo data is identified as demo data.
+- **USSD:** An Africa's Talking-compatible endpoint provides a basic-phone access path.
+- **Flexible inference:** Use Gemma through Google's API by default, or configure a local Ollama model.
 
-If you only have a few minutes, this is the path that shows the most:
+## Run locally
 
-1. **Onboarding** (`/onboarding`) — fill in a quick farm profile (crop, stage, location).
-2. **Scan** (`/app/scan`) → take/upload a leaf photo → **Clarify** — Gemma asks two real
-   clarifying questions before diagnosing, and runs a genuine photo-quality check first (it will
-   refuse to guess if the photo is too unclear — try a blurry photo to see this).
-3. **Diagnosis** — a full report: label, confidence, severity, treatment, all generated live by
-   Gemma from your actual photo + farm context.
-4. **Village Watch** (`/app/watch`) — a real, privacy-preserving outbreak map. It only shows
-   real crowdsourced data once ≥3 nearby opted-in farms have scanned recently; otherwise it
-   falls back to a **clearly labeled demo dataset** so the map is never empty during a demo. The
-   "Send live alert" button broadcasts to every open tab of the app in real time.
-5. **Assistant** (`/app/assistant`) — free-form chat, with voice input/output (see the browser
-   note below — voice input needs `https://` or `localhost`, not a bare IP address).
-6. Switch the language dropdown (top of the sidebar) to English, Hausa, Ewondo (pilot) or
-  Cameroon Pidgin (experimental). The static interface falls back to English for the two
-  experimental languages until native-speaker-reviewed translations are available.
-7. **USSD** (`/api/ussd`) — the same app, reachable from a basic feature phone with zero data
-   plan, over a telecom gateway. See [USSD access](#ussd-access-feature-phone-demo) below.
+### Requirements
 
----
-
-## USSD access (feature-phone demo)
-
-Everything above needs a smartphone with internet — which excludes exactly the farmers this app
-names as the core problem ("1 extension officer per ~1,800–2,500 farmers", "no signal, no
-service"). USSD (the `*123#` text-menu system that works on **any** phone, including basic
-feature phones, with **zero data plan**, over the regular GSM network) is the one channel that
-reaches that farmer today. Dialing in gets two real features, both answered by the same Gemma 4
-route handler as the rest of the app: a free-text farming question, and a read-only summary of
-Village Watch's real outbreak data for the caller's state.
-
-This needs **no new environment variables or dependencies** — the webhook is inbound-only
-(`src/app/api/ussd/route.ts`); it reuses the exact same `GOOGLE_API_KEY`/`DATABASE_URL` already
-configured above, and degrades the same honest way the rest of the app does when either is unset
-(a clearly-labeled demo message instead of a crash).
-
-A real, dial-able shortcode requires telecom carrier approval that takes weeks — not achievable
-for this submission. Instead, test it with **Africa's Talking's free USSD sandbox**, built for
-exactly this:
-
-1. Sign up free at [africastalking.com](https://account.africastalking.com/) — no card required.
-   Signup auto-provisions a **Sandbox** app with a USSD channel already attached.
-2. The sandbox's simulator calls a *public* URL, so either deploy to Vercel and use
-   `https://<your-app>.vercel.app/api/ussd`, or run `npm run dev` locally and tunnel it (e.g.
-   `ngrok http 3000`) for a public callback URL during local testing.
-3. In the sandbox dashboard → **USSD**, set the callback URL to that address.
-4. Open the **USSD Simulator** in the dashboard, enter any test phone number, and dial in. Walk
-   the menu: pick a language → "Ask a farming question" → type something → get Gemma's answer;
-   or → "Outbreaks near me" → pick a state → get a real summary from the same data Village Watch
-   uses on the web.
-
-No phone required to test this yourself, either — the webhook is a plain POST endpoint:
-```bash
-curl -s -X POST http://localhost:3000/api/ussd --data "sessionId=t1&text="
-curl -s -X POST http://localhost:3000/api/ussd --data "sessionId=t1&text=1"
-curl -s -X POST http://localhost:3000/api/ussd --data "sessionId=t1&text=1*1"
-curl -s -X POST http://localhost:3000/api/ussd --data "sessionId=t1&text=1*1*How+do+I+treat+maize+rust%3F"
-```
-
----
-
-## Tech stack
-
-- **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript** + **Tailwind CSS v4**
-- **Gemma 4** — swappable inference backend: Google (Gemini API) or fully local via **Ollama**
-  (same code path, one env var switches between them)
-- **Neon (Postgres)** — the one piece of real shared/cross-device state (Village Watch)
-- **YarnGPT** — text-to-speech voices configured for English and Hausa, with browser speech
-  fallback where a matching voice is installed. Ewondo and Cameroon Pidgin speech support is
-  not yet validated.
-- **MediaRecorder / Web Speech API** — camera capture and voice input
-
----
-
-## Quick start
-
-### Prerequisites
-
-- Node.js **20+** and npm
-- A free [Google AI Studio](https://aistudio.google.com/apikey) API key (for real Gemma
-  responses — the app also runs without one, see below)
-- (Optional)A free [Neon](https://neon.tech) Postgres database (only required for Village Watch's real
-  crowdsourced data — everything else works without it)
-
-### 1. Clone and install
+- Node.js 20.9 or newer and npm
+- A Google AI Studio API key for live cloud inference (optional for exploring the app)
+- A Postgres connection string for shared Village Watch data (optional)
 
 ```bash
-git clone https://github.com/festusisaac/Agrovision-AI.git
-cd Agrovision-AI
-npm install
-```
-
-### 2. Set up environment variables
-
-Copy the example file and fill it in:
-
-```bash
+git clone https://github.com/Njome-David/HACKTOBERFEST-HACK-DAY-GDM.git
+cd HACKTOBERFEST-HACK-DAY-GDM
+npm ci
 cp .env.local.example .env.local
-```
-
-| Variable | Required? | What it does |
-|---|---|---|
-| `GEMMA_PROVIDER` | No (defaults to `google`) | `google` or `local` — picks which backend serves Gemma 4 |
-| `GOOGLE_API_KEY` | **Yes, for real AI responses** | Free key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) — no card required |
-| `GOOGLE_MODEL` | No | Defaults to `gemma-4-26b-a4b-it` |
-| `OLLAMA_BASE_URL` / `OLLAMA_TEXT_MODEL` / `OLLAMA_VISION_MODEL` | Only if `GEMMA_PROVIDER=local` | Fully offline inference — run `ollama pull gemma3:2b` and `gemma3:4b` first |
-| `DATABASE_URL` | Only for Village Watch's real data | A Neon/Postgres connection string — see below |
-| `YARNGPT_API_KEY` + `YARNGPT_VOICE_*` | No | Voice output; without it, the app falls back to the browser's built-in Web Speech API automatically |
-
-**Without any keys at all**, the app still runs and every screen is explorable — Gemma-powered
-routes (diagnosis, chat, daily report) return a clearly labeled demo response instead of
-erroring. **For a real demo, at minimum set `GOOGLE_API_KEY`.**
-
-### 3. (Optional) Set up the database (Village Watch)
-
-Village Watch is the one feature backed by real shared/cross-device state, so it needs an actual
-Postgres database — everything else in the app works without this step.
-
-1. Create a free database at [neon.tech](https://neon.tech) (or, if deploying to Vercel: your
-   project → **Storage** → **Create Database** → Postgres, which provisions the same thing).
-2. Copy its connection string into `.env.local` as `DATABASE_URL`.
-3. That's it — the app creates its own tables automatically on first request (no migration step
-   to run).
-
-If `DATABASE_URL` isn't set, every other page still works; only `/app/watch` and its API routes
-will error until it's configured.
-
-### 4. Run it
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Add configuration to `.env.local`; never commit that file or real credentials.
 
----
+| Variable | Purpose |
+|---|---|
+| `GEMMA_PROVIDER` | `google` (default) or `local` |
+| `GOOGLE_API_KEY` | Enables live Gemma responses through Google's API |
+| `GOOGLE_MODEL` | Optional model override; defaults to `gemma-4-26b-a4b-it` |
+| `OLLAMA_BASE_URL` | Optional Ollama URL when using `GEMMA_PROVIDER=local` |
+| `OLLAMA_TEXT_MODEL` / `OLLAMA_VISION_MODEL` | Optional local models; defaults are in `src/lib/gemma.ts` |
+| `DATABASE_URL` | Optional Postgres database for shared Village Watch data |
+| `YARNGPT_API_KEY` | Optional generated speech; browser speech is used as a fallback |
 
-## Project structure
+Without a model key, the app can still be explored in its demo mode. Village Watch needs a database for shared reports; other data and settings are primarily stored in the browser.
 
+## Try the main flows
+
+1. Complete the farm profile at `/onboarding`.
+2. Open `/app/scan`, take or upload a crop photo, answer the clarification questions, and review the diagnosis.
+3. Use `/app/assistant` for text or voice questions.
+4. Visit `/app/watch` to explore outbreak reports and alerts.
+
+Microphone access requires HTTPS or `localhost`. Browser speech recognition is not available in iOS Safari. Ewondo and Cameroon Pidgin are experimental language options and should be checked with fluent speakers.
+
+## Stack
+
+- Next.js 16 App Router, React 19, TypeScript, and Tailwind CSS 4
+- Gemma 4 through Google's API or Ollama
+- Neon/Postgres for shared Village Watch data
+- YarnGPT and browser speech APIs for voice features
+- Africa's Talking-compatible USSD route
+
+## Useful commands
+
+```bash
+npm run dev     # Start the development server
+npm run build   # Create a production build
+npm run lint    # Run ESLint
 ```
-src/app/                    # marketing landing page (/)
-src/app/onboarding/         # farm profile setup wizard
-src/app/app/                # the main product shell (sidebar nav)
-  ├─ dashboard/              # daily overview, weather, Gemma-generated report
-  ├─ scan/                   # photo capture → clarifying questions → diagnosis
-  ├─ diagnosis/              # full diagnosis report + printable version
-  ├─ watch/                  # Village Watch outbreak map + live alerts
-  ├─ assistant/              # free-form chat (text + voice)
-  └─ history/                # past scans, saved locally
-src/app/api/                # route handlers (diagnose, chat, outbreaks, alerts, tts, weather...)
-src/app/api/ussd/           # USSD webhook (Africa's Talking) — feature-phone access, no internet needed
-src/lib/                    # Gemma client, i18n, geo/privacy math, device-local storage
-```
-
-## Architecture notes worth knowing when reviewing the code
-
-- **Real vs. demo data is always explicit.** Nothing pretends to be real when it isn't — Village
-  Watch's API response includes a `demo: boolean` field, and the UI visibly discloses which mode
-  it's in rather than silently faking data.
-- **Privacy-by-design on Village Watch.** Farmer GPS is rounded to ~500 m before it's ever
-  written to the database, and any cluster of fewer than 3 nearby farms is suppressed entirely
-  (real distance-based k-anonymity, not a naive grid) so no single farm is ever identifiable.
-- **Cloud today, on-device tomorrow.** Swapping `GEMMA_PROVIDER` between `google`/`local`
-  changes only the route handler's inference call — the client, prompts, and UI are identical
-  either way.
-- **Everything except Village Watch is device-local.** Farm profile, diagnosis history, and
-  preferences live in the browser's `localStorage`, never sent anywhere unless you explicitly
-  opt in to sharing a scan with Village Watch.
-
-## Known browser limitations (not bugs)
-
-- **Voice input requires a secure context.** Browsers only allow microphone access over `https://`
-  or `localhost` — it will not work if you open the app via a plain `http://<LAN-IP>` address on
-  another device. The app detects this and shows a message instead of failing silently.
-- **iOS Safari doesn't support the Web Speech API's `SpeechRecognition`** at all (any origin) —
-  voice *input* only works on Chrome/Android and desktop browsers. Voice *output* (TTS) works
-  everywhere.
-
-## Deployment
-
-The app is designed to deploy on **Vercel** as-is — `npm run build` succeeds with zero
-environment variables configured (Village Watch's database client only connects lazily, on
-first real request, so a missing `DATABASE_URL` never breaks the build). Connect the repo in
-the Vercel dashboard, add the same environment variables listed above under **Settings →
-Environment Variables**, and provision a Postgres database under the **Storage** tab.
