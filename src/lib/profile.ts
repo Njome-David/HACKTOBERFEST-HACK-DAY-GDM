@@ -17,8 +17,8 @@ export interface FarmProfile {
 export const DEMO_PROFILE: FarmProfile = {
   name: "Amina Musa",
   farm: "Kwakwaba Farm",
-  country: "Nigeria",
-  state: "Niger",
+  country: "Cameroon",
+  state: "Centre",
   lga: "Bosso",
   crop: "Maize",
   size: "1–5 hectares",
